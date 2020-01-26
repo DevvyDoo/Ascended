@@ -10,7 +10,7 @@ public class AscendedErrorHandler extends ErrorHandler {
     public void onError(Context ctx, Throwable error) {
 
         if (error instanceof CommandException)
-            ctx.send(error.getMessage());
+            ctx.send(String.format("%s %s", ctx.getAuthor().getAsMention(), error.getMessage()));
         else {
             error.printStackTrace();
         }

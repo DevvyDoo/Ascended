@@ -40,6 +40,8 @@ public class Ascended {
         yui.addCogs(new Fun());
 
         jdaBuilder.build();
+
+        logger.info("Ready to go!");
     }
 
 }
