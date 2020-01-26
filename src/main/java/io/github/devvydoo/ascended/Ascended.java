@@ -1,7 +1,8 @@
 package io.github.devvydoo.ascended;
 
 import io.github.devvydoo.ascended.cogs.Fun;
-import io.github.devvydoo.ascended.exceptions.AscendedErrorHandler;
+import io.github.devvydoo.ascended.cogs.ToonClaimer;
+import io.github.devvydoo.ascended.util.exceptions.AscendedErrorHandler;
 import net.dv8tion.jda.api.JDABuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,7 +38,10 @@ public class Ascended {
         JDABuilder jdaBuilder = new JDABuilder(main.getDiscordToken());
 
         Yui yui = new Yui(jdaBuilder, prefixManager, new AscendedErrorHandler());
-        yui.addCogs(new Fun());
+        yui.addCogs(
+                new Fun(),
+                new ToonClaimer()
+                );
 
         jdaBuilder.build();
 

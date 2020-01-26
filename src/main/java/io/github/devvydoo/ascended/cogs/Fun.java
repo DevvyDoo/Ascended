@@ -14,6 +14,8 @@ import java.util.Random;
 
 /**
  * A Yui cog that is used for various utility or fun commands/behavior
+ *
+ * TODO: Commands that need to be added still: RegionVote, Aetball, Msg
  */
 public class Fun extends Cog {
 
