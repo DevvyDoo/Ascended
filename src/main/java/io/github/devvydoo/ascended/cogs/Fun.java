@@ -2,9 +2,10 @@ package io.github.devvydoo.ascended.cogs;
 
 import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import sh.niall.yui.cogs.Cog;
-import sh.niall.yui.commands.Context;
-import sh.niall.yui.commands.interfaces.Command;
+import sh.niall.yui.cogs.cog.Cog;
+import sh.niall.yui.cogs.commands.annotations.Command;
+import sh.niall.yui.cogs.commands.annotations.CommandError;
+import sh.niall.yui.cogs.commands.context.Context;
 import sh.niall.yui.exceptions.CommandException;
 
 import javax.annotation.Nonnull;
@@ -68,7 +69,7 @@ public class Fun extends Cog {
         // Attempt to get their choice
         String userChoice;
         try {
-            userChoice = ctx.getArgs().get(1);  // 2nd argument is their input, 1st is the actual /rps command
+            userChoice = ctx.getArguments().get(0);  // 2nd argument is their input, 1st is the actual /rps command
         } catch (IndexOutOfBoundsException ignored){
             throw new CommandException("You must pass in an argument! < `rock` | `paper` | `scissors` >");
         }
@@ -100,6 +101,13 @@ public class Fun extends Cog {
             ctx.send(String.format("I win! I picked `%s` and you picked `%s`!", botChoice, userChoice));
     }
 
+    @CommandError(command = "rps")
+    public void rpsError(Context ctx, Exception e){
+
+
+
+    }
+
     /**
      * A command used to pick a random item from a list of args supplied by the user
      *
@@ -110,13 +118,11 @@ public class Fun extends Cog {
     public void randomPickCommand(Context ctx) throws CommandException {
 
         // Sanity check, were we given some arguments to work with? i.e. we need at least 2 since /pick will be one
-        if (ctx.getArgs().size() < 2)
+        if (ctx.getArguments().isEmpty())
             throw new CommandException("You must provide comma-separated arguments!");
 
-        ctx.getArgs().remove(0);  // Removes the arg that contains the actual command
-
         // Join the entire message into one string by replacing different list entries with spaces
-        String joinedArguments = String.join(" ", ctx.getArgs());
+        String joinedArguments = String.join(" ", ctx.getArguments());
 
         // First make sure that we have at least two choices to pick from
         if (!joinedArguments.contains(","))

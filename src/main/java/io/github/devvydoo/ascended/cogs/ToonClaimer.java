@@ -5,9 +5,13 @@ import io.github.devvydoo.ascended.util.claiming.ToonManager;
 import io.github.devvydoo.ascended.util.exceptions.InvalidToonException;
 import io.github.devvydoo.ascended.util.exceptions.ToonAlreadyClaimedException;
 import io.github.devvydoo.ascended.util.exceptions.ToonNotClaimedException;
-import sh.niall.yui.cogs.Cog;
-import sh.niall.yui.commands.Context;
-import sh.niall.yui.commands.interfaces.Command;
+import sh.niall.yui.cogs.cog.Cog;
+import sh.niall.yui.cogs.commands.annotations.Command;
+import sh.niall.yui.cogs.commands.checks.annotations.Check;
+import sh.niall.yui.cogs.commands.checks.checks.IsGuildMessage;
+import sh.niall.yui.cogs.commands.checks.checks.IsOwner;
+import sh.niall.yui.cogs.commands.checks.checks.IsPrivateMessage;
+import sh.niall.yui.cogs.commands.context.Context;
 import sh.niall.yui.exceptions.CommandException;
 
 /**
@@ -33,15 +37,18 @@ public class ToonClaimer extends Cog {
      * @throws ToonAlreadyClaimedException Thrown when the toon is already claimed and we cannot do anything for the user
      * @throws InvalidToonException Thrown when the Toon doesn't exist
      */
+    @Check(check = IsGuildMessage.class)
     @Command(name = "claim", aliases = {"c"})
     public void claimCommand(Context ctx) throws CommandException, ToonAlreadyClaimedException, InvalidToonException {
 
+
+
         // We need a toon name arg
-        if (ctx.getArgs().size() < 2)
+        if (ctx.getArguments().isEmpty())
             throw new CommandException("Please provide a Toon name!");
 
         // Grab the toon object and attempt to claim it. The classes and error handler will handle all checking for us.
-        Toon toon = toonManager.getToon(ctx.getArgs().get(1));
+        Toon toon = toonManager.getToon(ctx.getArguments().get(0));
         toon.claim(ctx.getAuthor());
 
         // Success!
@@ -62,16 +69,16 @@ public class ToonClaimer extends Cog {
     public void unclaimCommand(Context ctx) throws CommandException, ToonNotClaimedException, InvalidToonException {
 
         // We need a toon name arg
-        if (ctx.getArgs().size() < 2)
+        if (ctx.getArguments().isEmpty())
             throw new CommandException("Please provide a Toon name or `all`!");
 
         // See if they want to unclaim all toons
-        if (ctx.getArgs().get(1).equalsIgnoreCase("all")) {
+        if (ctx.getArguments().get(0).equalsIgnoreCase("all")) {
             toonManager.unclaimAllToons(ctx.getAuthor());
             ctx.send(String.format("%s Unclaimed all of your toons!", ctx.getAuthor().getAsMention()));
         }
         else {
-            Toon toon = toonManager.getToon(ctx.getArgs().get(1));  // Attempt to get the toon
+            Toon toon = toonManager.getToon(ctx.getArguments().get(1));  // Attempt to get the toon
             toonManager.unclaimToon(ctx.getAuthor(), toon);  // Attempt to unclaim it
             ctx.send(String.format("%s Unclaimed the toon `%s` for you!", ctx.getAuthor().getAsMention(), toon.getName()));
         }
@@ -79,6 +86,7 @@ public class ToonClaimer extends Cog {
     }
 
     // Temporary command to see toons claimed until the status message/updater thing is done
+    @Check(check = IsOwner.class)
     @Command(name = "debug")
     public void debugCommand(Context ctx) {
         StringBuilder message = new StringBuilder();

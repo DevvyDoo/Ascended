@@ -1,14 +1,14 @@
 package io.github.devvydoo.ascended;
 
+import io.github.devvydoo.ascended.cogs.ErrorHandler;
 import io.github.devvydoo.ascended.cogs.Fun;
 import io.github.devvydoo.ascended.cogs.ToonClaimer;
-import io.github.devvydoo.ascended.util.exceptions.AscendedErrorHandler;
 import net.dv8tion.jda.api.JDABuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sh.niall.yui.Yui;
+import sh.niall.yui.cogs.commands.prefix.PrefixManager;
 import sh.niall.yui.exceptions.PrefixException;
-import sh.niall.yui.prefix.PrefixManager;
 
 import javax.security.auth.login.LoginException;
 import java.io.File;
@@ -34,13 +34,14 @@ public class Ascended {
 
         Logger logger = LoggerFactory.getLogger(Ascended.class);
 
-        PrefixManager prefixManager = new PrefixManager("/");
-        JDABuilder jdaBuilder = new JDABuilder(main.getDiscordToken());
+        PrefixManager prefixManager = new PrefixManager("/", "~");
+        JDABuilder jdaBuilder = JDABuilder.createDefault(main.getDiscordToken());
 
-        Yui yui = new Yui(jdaBuilder, prefixManager, new AscendedErrorHandler());
-        yui.addCogs(
+        Yui yui = new Yui(jdaBuilder, prefixManager);
+        yui.addCog(
                 new Fun(),
-                new ToonClaimer()
+                new ToonClaimer(),
+                new ErrorHandler()
                 );
 
         jdaBuilder.build();
